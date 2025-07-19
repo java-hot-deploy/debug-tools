@@ -28,6 +28,8 @@ public class DebugToolsLibUtils {
 
     private static File DEBUG_TOOLS_HOME_DIR;
     private static final File DEBUG_TOOLS_LIB_DIR;
+    private static final File DEBUG_TOOLS_CACHE_DIR;
+    private static final File DEBUG_TOOLS_CONFIG_DIR;
 
     static {
         String debugToolsLibDirEnv = System.getenv("DEBUG_TOOLS_HOME_DIR");
@@ -62,6 +64,26 @@ public class DebugToolsLibUtils {
                 // ignore
             }
         }
+        DEBUG_TOOLS_CACHE_DIR = new File(DEBUG_TOOLS_HOME_DIR, "cache");
+        if (!DEBUG_TOOLS_CACHE_DIR.exists()) {
+            try {
+                DEBUG_TOOLS_CACHE_DIR.mkdirs();
+            } catch (Throwable e) {
+                // ignore
+            }
+        }
+        DEBUG_TOOLS_CONFIG_DIR = new File(DEBUG_TOOLS_HOME_DIR, "config");
+        if (!DEBUG_TOOLS_CONFIG_DIR.exists()) {
+            try {
+                DEBUG_TOOLS_CONFIG_DIR.mkdirs();
+            } catch (Throwable e) {
+                // ignore
+            }
+        }
+
+
+
+
 
     }
 
@@ -72,4 +94,12 @@ public class DebugToolsLibUtils {
     public static File getDebugToolsLibDir() {
         return DEBUG_TOOLS_LIB_DIR;
     }
+
+    public static File getDebugToolsCacheDir() {
+        return DEBUG_TOOLS_CACHE_DIR;
+    }
+    public static File getDebugToolsConfigDir() {
+        return DEBUG_TOOLS_CONFIG_DIR;
+    }
+
 }

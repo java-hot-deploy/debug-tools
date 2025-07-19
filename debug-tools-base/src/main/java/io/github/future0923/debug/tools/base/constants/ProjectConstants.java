@@ -35,5 +35,5 @@ public interface ProjectConstants {
 
     String CONFIG_FILE = "debug-tools.properties";
 
-    String AUTO_ATTACH_FLAG_FILE = NAME + "/auto_attach.txt";
+    String AUTO_ATTACH_FLAG_FILE = "auto_attach.txt";
 }
