@@ -522,7 +522,7 @@ public class DebugToolsFileUtils {
      * 获取自动附加文件
      */
     public static File getAutoAttachFile() {
-        return FileUtil.touch(FileUtil.getUserHomePath() + "/" + ProjectConstants.AUTO_ATTACH_FLAG_FILE);
+        return FileUtil.touch(DebugToolsLibUtils.getDebugToolsConfigDir() + File.separator + ProjectConstants.AUTO_ATTACH_FLAG_FILE);
     }
 
 }

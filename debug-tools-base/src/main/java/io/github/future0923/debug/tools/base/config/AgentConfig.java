@@ -18,8 +18,10 @@ package io.github.future0923.debug.tools.base.config;
 
 import io.github.future0923.debug.tools.base.SpyAPI;
 import io.github.future0923.debug.tools.base.constants.ProjectConstants;
+import io.github.future0923.debug.tools.base.hutool.core.io.FileUtil;
 import io.github.future0923.debug.tools.base.logging.Logger;
 import io.github.future0923.debug.tools.base.utils.DebugToolsFileUtils;
+import io.github.future0923.debug.tools.base.utils.DebugToolsLibUtils;
 import io.github.future0923.debug.tools.base.utils.DebugToolsStringUtils;
 
 import java.io.File;
@@ -59,8 +61,7 @@ public class AgentConfig {
     private boolean isUpgrade;
 
     private AgentConfig() {
-        String homeDir = System.getProperty("user.home");
-        propertiesFile = new File(homeDir + File.separator + ProjectConstants.NAME + File.separator + FILE_NAME);
+        propertiesFile = FileUtil.touch(DebugToolsLibUtils.getDebugToolsConfigDir() + File.separator + FILE_NAME);
         if (!propertiesFile.exists()) {
             DebugToolsFileUtils.touch(propertiesFile);
         }
