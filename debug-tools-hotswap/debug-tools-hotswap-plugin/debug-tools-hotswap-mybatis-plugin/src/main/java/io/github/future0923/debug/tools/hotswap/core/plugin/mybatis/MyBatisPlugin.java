@@ -27,6 +27,7 @@ import io.github.future0923.debug.tools.hotswap.core.plugin.mybatis.patch.Dynami
 import io.github.future0923.debug.tools.hotswap.core.plugin.mybatis.patch.IBatisPatcher;
 import io.github.future0923.debug.tools.hotswap.core.plugin.mybatis.patch.MyBatisPlusPatcher;
 import io.github.future0923.debug.tools.hotswap.core.plugin.mybatis.patch.MyBatisSpringPatcher;
+import io.github.future0923.debug.tools.hotswap.core.plugin.mybatis.reload.MyBatisSpringResourceManager;
 import io.github.future0923.debug.tools.hotswap.core.plugin.mybatis.utils.MyBatisUtils;
 import org.xml.sax.SAXException;
 
@@ -97,9 +98,17 @@ public class MyBatisPlugin {
         if (!MyBatisUtils.isMyBatisSpring(appClassLoader) && !MyBatisUtils.isMyBatisPlus(appClassLoader)) {
             return;
         }
-        if ((FileEvent.CREATE.equals(fileEvent) && MyBatisUtils.isMapperXml(url.getPath()))
-                || ((FileEvent.MODIFY.equals(fileEvent) && configurationMap.containsKey(url.getPath())))) {
+        if ((FileEvent.CREATE.equals(fileEvent) && MyBatisUtils.isMapperXml(url.getPath()) && isInMapperLocations(url))
+                || (FileEvent.MODIFY.equals(fileEvent) && configurationMap.containsKey(url.getPath()))) {
             scheduler.scheduleCommand(new MyBatisSpringXmlReloadCommand(appClassLoader, url), 1000);
         }
+    }
+
+    private static boolean isInMapperLocations(URL url) {
+        if (MyBatisSpringResourceManager.isInMapperLocations(url.getPath())) {
+            return true;
+        }
+        logger.info("{} is not in mybatis.mapper-locations or mybatis-plus.mapper-locations", url.getPath());
+        return false;
     }
 }

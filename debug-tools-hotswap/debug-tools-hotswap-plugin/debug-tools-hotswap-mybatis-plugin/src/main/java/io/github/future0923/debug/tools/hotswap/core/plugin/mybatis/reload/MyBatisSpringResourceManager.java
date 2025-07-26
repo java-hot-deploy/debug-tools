@@ -26,8 +26,11 @@ import io.github.future0923.debug.tools.hotswap.core.plugin.mybatis.patch.MyBati
 import org.apache.ibatis.session.Configuration;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.mapper.ClassPathMapperScanner;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import java.net.URL;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -51,6 +54,16 @@ public class MyBatisSpringResourceManager {
     private static ClassPathMapperScanner mapperScanner;
 
     /**
+     * Mapper.xml文件扫描路径
+     */
+    private static final Set<String> mapperLocations = new HashSet<>();
+
+    /**
+     * 用于解析Mapper.xml文件的位置
+     */
+    private static final PathMatchingResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
+
+    /**
      * <ul>
      *  <li>当{@link Configuration}实例化的时候{@link IBatisPatcher#patchConfiguration}会注册进来。</li>
      *  <li>当{@link SqlSessionFactoryBean}实例化完成时会获取到{@link Configuration}对象注入到集合中，在{@link MyBatisSpringPatcher#patchSqlSessionFactoryBean(CtClass, ClassPool)}插桩。</li>
@@ -71,6 +84,16 @@ public class MyBatisSpringResourceManager {
         }
         mapperScanner = scanner;
 
+    }
+
+    /**
+     * {@link MyBatisSpringPatcher#patchMapperLocations(CtClass, ClassPool)}注入对象
+     */
+    public static void addMapperLocations(String[] mapperLocations) {
+        if (mapperLocations == null) {
+            return;
+        }
+        MyBatisSpringResourceManager.mapperLocations.addAll(Arrays.asList(mapperLocations));
     }
 
     /**
@@ -106,5 +129,25 @@ public class MyBatisSpringResourceManager {
 
     public static Set<Configuration> getConfigurationList() {
         return configurationList;
+    }
+
+    public static boolean isInMapperLocations(String absolutePath) {
+        if (mapperLocations.isEmpty()) {
+            logger.debug("mapperLocations未配置，所有mapper xml文件都会加载");
+            return true;
+        }
+        for (String mapperLocation : mapperLocations) {
+            try {
+                Resource[] resources = resourcePatternResolver.getResources(mapperLocation);
+                for (Resource resource : resources) {
+                    if (resource.getFile().getAbsolutePath().equals(absolutePath)) {
+                        return true;
+                    }
+                }
+            } catch (Exception e) {
+                logger.error("获取mapperLocations失败", e);
+            }
+        }
+        return false;
     }
 }

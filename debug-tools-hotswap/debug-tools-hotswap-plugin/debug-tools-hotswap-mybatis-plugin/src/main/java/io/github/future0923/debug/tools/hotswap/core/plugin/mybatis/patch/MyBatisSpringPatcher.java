@@ -83,6 +83,24 @@ public class MyBatisSpringPatcher {
         }
     }
 
+    /**
+     * MyBatisProperties.resolveMapperLocations 插桩，获取mapperLocations
+     *
+     * @param ctClass   ctClass
+     * @param classPool classPool
+     */
+    @OnClassLoadEvent(classNameRegexp = "org.mybatis.spring.boot.autoconfigure.MyBatisProperties|com.baomidou.mybatisplus.autoconfigure.MybatisProperties")
+    public static void patchMapperLocations(CtClass ctClass, ClassPool classPool) {
+        try {
+            CtMethod resolveMapperLocations = ctClass.getDeclaredMethod("resolveMapperLocations");
+            resolveMapperLocations.insertAfter("{" +
+                    MyBatisSpringResourceManager.class.getName() + ".addMapperLocations(this.mapperLocations);" +
+                    "}");
+        } catch (Throwable e) {
+            logger.error("patchMapperLocations err", e);
+        }
+    }
+
     @OnClassLoadEvent(classNameRegexp = "org.mybatis.spring.SqlSessionFactoryBean")
     public static void patchSqlSessionFactoryBean(CtClass ctClass, ClassPool classPool) throws Exception {
         logger.debug("org.mybatis.spring.SqlSessionFactoryBean patched.");
