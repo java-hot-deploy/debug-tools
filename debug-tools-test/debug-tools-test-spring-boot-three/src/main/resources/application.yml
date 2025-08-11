@@ -1,2 +1,8 @@
 server:
   port: 8081
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://120.48.104.68:3306/debug-tools?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8&
+    username: debug-tools
+    password: 123456Aa

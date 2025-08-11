@@ -30,5 +30,5 @@ public class DtUser {
     @TableId
     private Integer id;
 
-    private String name;
+    //private String name;
 }
