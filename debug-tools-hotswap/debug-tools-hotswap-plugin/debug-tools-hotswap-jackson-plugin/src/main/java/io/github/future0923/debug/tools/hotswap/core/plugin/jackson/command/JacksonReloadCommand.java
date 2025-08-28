@@ -94,6 +94,15 @@ public class JacksonReloadCommand extends MergeableCommand {
         for (Object serializerCache : serializerCaches) {
             ReflectUtil.invoke(serializerCache, "flush");
         }
+        for (Object objectMapper : objectMappers) {
+            try {
+                // 强制触发 Jackson introspect
+                ReflectUtil.invoke(objectMapper, "writeValueAsString", clazz.getDeclaredConstructor().newInstance());
+            } catch (Exception e) {
+                return;
+            }
+        }
+
         if (changed) {
             logger.reload("Class '{}' has been reloaded.", clazz.getName());
         }
